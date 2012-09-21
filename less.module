@@ -87,9 +87,9 @@ function _less_pre_render($styles) {
         
         if (_less_inc()) {
             
-          $less = new lessc();
+          $less = new lessc(DRUPAL_ROOT.base_path().$input_file);
   
-          $contents = drupal_load_stylesheet($input_file, FALSE);
+          $contents = $less->parse();
   
           // Build the base URL of this CSS file: start with the full URL.
           $css_base_url = file_create_url($input_file);
@@ -106,8 +106,8 @@ function _less_pre_render($styles) {
           $data = preg_replace_callback('/url\(\s*[\'"]?(?![a-z]+:|\/+)([^\'")]+)[\'"]?\s*\)/i', '_drupal_build_css_path', $contents);
   
           try {
-            $output_data = $less->parse($data);
-            file_unmanaged_save_data($output_data, $output_file, FILE_EXISTS_REPLACE);
+            file_unmanaged_save_data($data, $output_file, FILE_EXISTS_REPLACE);
+            
           }
           catch (Exception $e) {
             $message = 'LESS error: @message, %input_file';
